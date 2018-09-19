@@ -53,22 +53,6 @@ node {
 
         }
 
-        //PUSH to Registry
-        stage('Push To Registry'){
-            withDockerRegistry(credentialsId: 'docker-hub-credentials', url: "${DOCKER_REGISTRY_URL}") {
-                 nginxweb.push("${env.BUILD_NUMBER}")
-                 nginxweb.push("latest")
-            }
-
-
-        }
-        // Remove Local Image after push
-        stage('Remove Local Images') {
-            // remove docker images
-            sh("docker rmi -f ${DOCKER_IMAGE_REGISTRY}/${IMAGE_NAME}:${env.TAG} || :")
-            sh("docker rmi -f ${DOCKER_IMAGE_REGISTRY}/${IMAGE_NAME}:${env.BUILD_NUMBER} || :")
-            sh("docker rmi -f ${DOCKER_IMAGE_REGISTRY}/${IMAGE_NAME}:latest || :")
-        }
 
     }
     // DEPLOPY CONTAINER WITH TERRAFORM
