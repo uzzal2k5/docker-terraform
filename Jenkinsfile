@@ -56,7 +56,7 @@ node {
 
         //PUSH TO DOCKER HUB
         stage('PUSH IMAGE'){
-            withDockerRegistry(credentialsId: 'docker-hub-credentials', url: 'https://registry.hub.docker.com') {
+            withDockerRegistry([ credentialsId: "DOCKERID", url: "" ]){
                nginxweb.push("${env.BUILD_NUMBER}")
                nginxweb.push("latest")
             }
