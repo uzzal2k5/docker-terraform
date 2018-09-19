@@ -4,6 +4,7 @@ import groovy.json.JsonSlurperClassic
 def DOCKER_DEPLOY_SERVER = "tcp://192.168.8.62:2376"
 def DOCKER_IMAGE_REGISTRY = "uzzal2k5"
 def REPOSITORY_NAME = "https://github.com/uzzal2k5/docker-terraform.git"
+def DOCKER_REGISTRY_URL = "https://registry.hub.docker.com"
 
 
 def getVersion(def projectJson){
@@ -54,7 +55,7 @@ node {
 
         //PUSH to Registry
         stage('Push To Registry'){
-            withDockerRegistry("${DOCKER_IMAGE_REGISTRY}","docker-hub-credentials") {
+            withDockerRegistry(credentialsId: 'docker-hub-credentials', url: "${DOCKER_REGISTRY_URL}") {
                  nginxweb.push("${env.BUILD_NUMBER}")
                  nginxweb.push("latest")
             }
