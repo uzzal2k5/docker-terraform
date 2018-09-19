@@ -54,7 +54,7 @@ node {
 
         //PUSH to Registry
         stage('Push To Registry'){
-            withDockerRegistry(url: "${DOCKER_IMAGE_REGISTRY}","docker-hub-credentials") {
+            withDockerRegistry("${DOCKER_IMAGE_REGISTRY}","docker-hub-credentials") {
                  nginxweb.push("${env.BUILD_NUMBER}")
                  nginxweb.push("latest")
             }
