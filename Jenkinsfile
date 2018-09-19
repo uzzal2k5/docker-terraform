@@ -55,8 +55,8 @@ node {
         //PUSH to Registry
         stage('Push To Registry'){
             withDockerRegistry(url: "${DOCKER_IMAGE_REGISTRY}") {
-                 nginxweb.push("${IMAGE_NAME}:${env.BUILD_NUMBER}")
-                 nginxweb.push("${IMAGE_NAME}:latest")
+                 nginxweb.push("${env.BUILD_NUMBER}")
+                 nginxweb.push("latest")
             }
 
 
