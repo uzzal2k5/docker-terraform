@@ -5,7 +5,7 @@ provider "docker" {
 }
 
 resource "docker_image" "nginxweb"{
-  name = "registry.ipvbd.com/nginx"
+  name = "uzzal2k5/nginx"
 
 }
 # Create a container

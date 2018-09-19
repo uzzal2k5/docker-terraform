@@ -2,7 +2,7 @@
 
 import groovy.json.JsonSlurperClassic
 def DOCKER_DEPLOY_SERVER = "tcp://192.168.8.62:2376"
-def DOCKER_IMAGE_REGISTRY = "registry.ipvbd.com"
+def DOCKER_IMAGE_REGISTRY = "uzzal2k5"
 def REPOSITORY_NAME = "https://github.com/uzzal2k5/docker-terraform.git"
 
 
