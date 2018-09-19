@@ -57,8 +57,8 @@ node {
     }
     // DEPLOPY CONTAINER WITH TERRAFORM
     stage('CONTAINER DEPLOY WITH TF') {
-                sh ("terraform init")
                 def tfCMD = "/usr/local/bin/terraform"
+                sh "${tfCMD} init"
                 sh "${tfCMD} apply"
 
     }
