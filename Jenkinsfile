@@ -58,8 +58,7 @@ node {
     // DEPLOPY CONTAINER WITH TERRAFORM
     stage('CONTAINER DEPLOY WITH TF') {
 
-                def tfHome = tool name: 'terraform', type: 'terraform'
-                def tfCMD = "${tfHome}/bin/terraform"
+                def tfCMD = "/usr/local/bin/terraform"
                 sh "${tfCMD} apply"
 
     }
