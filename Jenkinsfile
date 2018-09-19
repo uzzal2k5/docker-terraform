@@ -59,7 +59,7 @@ node {
     stage('CONTAINER DEPLOY WITH TF') {
                 def tfCMD = "/usr/local/bin/terraform"
                 sh "${tfCMD} init"
-                sh "${tfCMD} apply"
+                sh "${tfCMD} apply -auto-approve"
 
     }
 
