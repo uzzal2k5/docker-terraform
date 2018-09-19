@@ -5,6 +5,7 @@ def DOCKER_DEPLOY_SERVER = "tcp://192.168.8.62:2376"
 def DOCKER_IMAGE_REGISTRY = "uzzal2k5"
 def REPOSITORY_NAME = "https://github.com/uzzal2k5/docker-terraform.git"
 def DOCKER_REGISTRY_URL = "https://registry.hub.docker.com"
+def CONTAINER = "nginx-serve"
 
 
 def getVersion(def projectJson){
@@ -52,17 +53,33 @@ node {
 
 
         }
+    // Remove Local Image after push
+        stage('Remove Local Images') {
+           // remove docker images
+           sh("docker rmi -f ${DOCKER_IMAGE_REGISTRY}/${IMAGE_NAME}:${env.TAG} || :")
+           sh("docker rmi -f ${DOCKER_IMAGE_REGISTRY}/${IMAGE_NAME}:${env.BUILD_NUMBER} || :")
+
+        }
 
 
     }
     // DEPLOPY CONTAINER WITH TERRAFORM
-    stage('CONTAINER DEPLOY WITH TF') {
-                def tfCMD = "/usr/local/bin/terraform"
-                sh "${tfCMD} init"
-                sh "${tfCMD} apply -auto-approve"
+    withDockerServer([uri: "${DOCKER_DEPLOY_SERVER}"]){
+        // Deploy Container
+
+        stage('CONTAINER CLEAN'){
+                sh "docker ps -f name=${CONTAINER} -q | xargs --no-run-if-empty docker container stop"
+                sh "docker container ls -a -fname=${CONTAINER} -q | xargs -r docker container rm"
+                sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
+        }
+        stage('CONTAINER DEPLOY WITH TF') {
+                def TERRAFORM = "/usr/local/bin/terraform"
+                sh "${TERRAFORM} init"
+                sh "${TERRAFORM} apply -auto-approve"
+
+        }
 
     }
-
 
 //NODE END
 }
