@@ -1,7 +1,7 @@
 #!groovy
 
 import groovy.json.JsonSlurperClassic
-def DOCKER_DEPLOY_SERVER = "tcp://192..168.8.62:2376"
+def DOCKER_DEPLOY_SERVER = "tcp://192.168.8.62:2376"
 def DOCKER_IMAGE_REGISTRY = "registry.ipvbd.com"
 def REPOSITORY_NAME = "https://github.com/uzzal2k5/docker-terraform.git"
 
@@ -55,8 +55,8 @@ node {
         //PUSH to Registry
         stage('Push To Registry'){
             withDockerRegistry(url: "${DOCKER_IMAGE_REGISTRY}") {
-                nettyUI.push("${IMAGE_NAME}:${env.BUILD_NUMBER}")
-                nettyUI.push("${IMAGE_NAME}:latest")
+                 nginxweb.push("${IMAGE_NAME}:${env.BUILD_NUMBER}")
+                 nginxweb.push("${IMAGE_NAME}:latest")
             }
 
 
