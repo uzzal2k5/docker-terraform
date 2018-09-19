@@ -1,13 +1,15 @@
 #!groovy
 
 import groovy.json.JsonSlurperClassic
+
+// DEFINING REQUIRED VARIABLES
 def DOCKER_DEPLOY_SERVER = "tcp://192.168.8.62:2376"
-def DOCKER_IMAGE_REGISTRY = "uzzal2k5"
-def REPOSITORY_NAME = "https://github.com/uzzal2k5/docker-terraform.git"
+def DOCKER_IMAGE_REPOSITORY = "uzzal2k5"
+def GIT_REPOSITORY_NAME = "https://github.com/uzzal2k5/docker-terraform.git"
 def DOCKER_REGISTRY_URL = "https://registry.hub.docker.com"
-def CONTAINER = "nginx-serve"
+def CONTAINER = "nginx-server"
 
-
+// DEFINING FUNCTION TO GET VERSION AND REVISION
 def getVersion(def projectJson){
     def slurper = new JsonSlurperClassic()
     project = slurper.parseText(projectJson)
@@ -21,15 +23,15 @@ def version, revision
 node {
     def IMAGE_NAME = "nginx"
 
-    // Git Clone
-    stage('Checkout'){
+    // CLONNING FROM GIT
+    stage('CHECKOUT'){
 
        try {
         git(branch: 'master',
             changelog: true,
             credentialsId: 'github-credentials',
             poll: true,
-            url: "${REPOSITORY_NAME}"
+            url: "${GIT_REPOSITORY_NAME}"
             )
        }
        catch(Exception e){
@@ -45,19 +47,27 @@ node {
 
     }
 
-    // DOcker Image Build & Deploy
+    //DOCKER BUILD
     withDockerServer([uri: "${DOCKER_DEPLOY_SERVER}"]) {
-        stage('Image Build'){
+        stage('IMAGE BUILD'){
 
-            nginxweb = docker.build("${DOCKER_IMAGE_REGISTRY}/${IMAGE_NAME}")
-
-
+            nginxweb = docker.build("${DOCKER_IMAGE_REPOSITORY}/${IMAGE_NAME}")
         }
-    // Remove Local Image after push
+
+        //PUSH TO DOCKER HUB
+        stage('PUSH IMAGE'){
+            withDockerRegistry(credentialsId: 'docker-hub-credentials', url: 'https://registry.hub.docker.com') {
+               nginxweb.push("${env.BUILD_NUMBER}")
+               nginxweb.push("latest")
+            }
+        }
+
+        // REMOVE LOCAL IMAGES
         stage('Remove Local Images') {
            // remove docker images
-           sh("docker rmi -f ${DOCKER_IMAGE_REGISTRY}/${IMAGE_NAME}:${env.TAG} || :")
-           sh("docker rmi -f ${DOCKER_IMAGE_REGISTRY}/${IMAGE_NAME}:${env.BUILD_NUMBER} || :")
+           sh("docker rmi -f ${DOCKER_IMAGE_REPOSITORY}/${IMAGE_NAME}:${env.TAG} || :")
+           sh("docker rmi -f ${DOCKER_IMAGE_REPOSITORY}/${IMAGE_NAME}:${env.BUILD_NUMBER} || :")
+           sh("docker rmi -f ${DOCKER_IMAGE_REPOSITORY}/${IMAGE_NAME}:latest || :")
 
         }
 
@@ -65,13 +75,18 @@ node {
     }
     // DEPLOPY CONTAINER WITH TERRAFORM
     withDockerServer([uri: "${DOCKER_DEPLOY_SERVER}"]){
-        // Deploy Container
-
+        // CLEANING CONTAINER
         stage('CONTAINER CLEAN'){
                 sh "docker ps -f name=${CONTAINER} -q | xargs --no-run-if-empty docker container stop"
                 sh "docker container ls -a -fname=${CONTAINER} -q | xargs -r docker container rm"
                 sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
         }
+
+        // CLEANNING IMAGE
+        stage('IMAGE CLEANUP') {
+                sh 'docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi'
+        }
+        // RUNNING TERRAFORM TO DEPLOY CONTAINER
         stage('CONTAINER DEPLOY WITH TF') {
                 def TERRAFORM = "/usr/local/bin/terraform"
                 sh "${TERRAFORM} init"
