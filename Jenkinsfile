@@ -1,7 +1,7 @@
 #!groovy
 import groovy.json.JsonSlurperClassic
 def SERVER_TO_DEPLOY = "tcp://10.10.10.62:2376"
-def DOCKER_IMAGE_REGISTRY = "index.docker.io/uzzal2k5/"
+def DOCKER_IMAGE_REGISTRY = "index.docker.io/uzzal2k5"
 def GIT_REPOSITORY_NAME  = "https://github.com/uzzal2k5/docker-terraform.git"
 def BRANCH = "master"
 
@@ -61,8 +61,8 @@ def DockerImageBuild( DOCKER_BUILD_SERVER, DOCKER_IMAGE_REGISTRY, IMAGE_NAME ){
         //PUSH TO REGISTRY
         stage('PUSH IMAGE'){
             withDockerRegistry(url: "${DOCKER_IMAGE_REGISTRY}") {
-                nginxImages.push("${IMAGE_NAME}:${env.BUILD_NUMBER}")
-                nginxImages.push("${IMAGE_NAME}:latest")
+                nginxImages.push("{env.BUILD_NUMBER}")
+                nginxImages.push("latest")
             }
 
         }
