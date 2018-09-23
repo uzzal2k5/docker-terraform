@@ -1,9 +1,9 @@
 #!groovy
 import groovy.json.JsonSlurperClassic
-def DOCKER_BUILD_SERVER = "tcp://10.10.10.62:2376"
+def SERVER_TO_DEPLOY = "tcp://10.10.10.62:2376"
 def DOCKER_IMAGE_REGISTRY = "index.docker.io/uzzal2k5/"
 def GIT_REPOSITORY_NAME  = "https://github.com/uzzal2k5/docker-terraform.git"
-
+def BRANCH = "master"
 
 def IMAGE_NAME = "nginx"
 def nginxImages
@@ -21,10 +21,10 @@ def getVersion(def projectJson){
 
 
 // REPOSITORY CLONE FROM GIT
-def CloneFromGit( REPOSITORY_NAME ){
+def CloneFromGit( REPOSITORY_NAME, BRANCH ){
     def version, revision
     try {
-        git(branch: "${params.BRANCH}",
+        git(branch: "${BRANCH}",
                 changelog: true,
                 credentialsId: 'docker-hub-credentials',
                 poll: true,
@@ -88,17 +88,17 @@ def DeployWithTerraform(DOCKER_BUILD_SERVER){
 
 // BUILD NODE
 node {
-     def version, revision
+
      // GIT CLONE
      stage('GIT CLONE') {
-            CloneFromGit(GIT_REPOSITORY_NAME)
+            CloneFromGit(GIT_REPOSITORY_NAME,BRANCH)
 
       }
      // BUILD & PUSH IMAGE
      DockerImageBuild(SERVER_TO_DEPLOY,DOCKER_IMAGE_REGISTRY, IMAGE_NAME)
 
      // DEPLOY USING TERRAFORM
-     DeployWithTerraform(DOCKER_BUILD_SERVER)
+     DeployWithTerraform(SERVER_TO_DEPLOY)
 
 //NODE END
 }
