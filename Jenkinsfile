@@ -18,7 +18,7 @@ def getVersion(def projectJson){
     return project.version.split('-')[0]
 }
 
-def version, revision
+
 
 // REPOSITORY CLONE FROM GIT
 def CloneFromGit( REPOSITORY_NAME ){
@@ -88,7 +88,7 @@ def DeployWithTerraform(DOCKER_BUILD_SERVER){
 
 // BUILD NODE
 node {
-
+     def version, revision
      // GIT CLONE
      stage('GIT CLONE') {
             CloneFromGit(GIT_REPOSITORY_NAME)
