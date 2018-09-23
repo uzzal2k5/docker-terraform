@@ -26,7 +26,7 @@ def CloneFromGit( REPOSITORY_NAME ){
     try {
         git(branch: "${params.BRANCH}",
                 changelog: true,
-                credentialsId: 'FreeIPA_USERID',
+                credentialsId: 'docker-hub-credentials',
                 poll: true,
                 url: "${REPOSITORY_NAME }"
         )
