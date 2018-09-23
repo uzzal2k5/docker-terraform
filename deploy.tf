@@ -14,7 +14,7 @@ resource "docker_container" "nginx-server" {
   image = "${docker_image.nginxweb.latest}"
   ports {
     internal = 80
-    external =  80
+    external =  8087
 
   }
   volumes {
