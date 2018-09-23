@@ -10,7 +10,7 @@ def nginxImages
 
 
 
-# Version & Release Specified Here
+// Version & Release Specified Here
 def getVersion(def projectJson){
     def slurper = new JsonSlurperClassic()
     project = slurper.parseText(projectJson)
@@ -20,7 +20,7 @@ def getVersion(def projectJson){
 
 def version, revision
 
-# REPOSITORY CLONE FROM GIT
+// REPOSITORY CLONE FROM GIT
 def CloneFromGit( REPOSITORY_NAME ){
     def version, revision
     try {
@@ -46,7 +46,7 @@ def CloneFromGit( REPOSITORY_NAME ){
 
 
 
-# DOCKER IMAGE BUILD & PUSH TO REGISTRY
+// DOCKER IMAGE BUILD & PUSH TO REGISTRY
 def DockerImageBuild( DOCKER_BUILD_SERVER, DOCKER_IMAGE_REGISTRY, IMAGE_NAME ){
 
     // DOCKER IMAGE BUILD
@@ -72,7 +72,7 @@ def DockerImageBuild( DOCKER_BUILD_SERVER, DOCKER_IMAGE_REGISTRY, IMAGE_NAME ){
 }
 
 
-# RUNNING TERRAFORM TO DEPLOY CONTAINER
+// RUNNING TERRAFORM TO DEPLOY CONTAINER
 
 def DeployWithTerraform(DOCKER_BUILD_SERVER){
     withDockerServer([uri: "${DOCKER_BUILD_SERVER}"]) {
